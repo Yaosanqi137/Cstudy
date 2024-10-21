@@ -9,6 +9,7 @@ const int FONT_HEIGHT = 16;       // 单字点阵高度(行数)
 const int DOT_SIZE = 16 * 16 / 8; // 一个汉字点阵所占的字节数
 const int SUB_CODE = 0xA0;        // 内码与区、位码的差值
 
+char STR[] = "原神，启动！";
 char *FONT_FILE_NAME = "chs16.fon"; // 点阵字库文件名
 char BIN_DOT[16 * 16 / 8] = {0};    // 存储点阵信息的数组
 
@@ -26,7 +27,10 @@ void printCharBinDot(char* binDot, int len)
         {
             // 输出当前字节第 bitIndex 位的值
             bitValue  = ((binDot[charNum] >> bitIndex) & 0x1 );
-            printf("%c ", bitValue + 'H');
+            if(bitValue == 0)
+                printf("  ");
+            else
+                printf("$ ");
 
             // 满 12 位输出一行
             if ((++bitNum % 16) == 0)
@@ -39,15 +43,6 @@ int main()
 {
     FILE *fp = fopen(FONT_FILE_NAME, "rb");
     int stringSize = FONT_WEIGHT * FONT_HEIGHT;
-    // 输入模块
-    int byte;
-    printf("请问你想要输入几个字:");
-    scanf("%d", &byte);
-    byte = byte * 2 + 1;
-    char *STR = (char *)malloc(byte);
-    getchar();
-    printf("请输入句子: ");
-    fgets(STR, byte, stdin);
 
     int i = 0;
     int offset = 0;
@@ -71,7 +66,6 @@ int main()
     }
 
     fclose(fp);
-    free(STR);
     system("pause");
     return 0;
 }
