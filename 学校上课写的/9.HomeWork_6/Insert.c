@@ -1,0 +1,37 @@
+// 6.1 insert
+#include <stdio.h>
+#define N 5
+
+int temp;
+
+void swap(int *m, int *n){
+    temp = *m;
+    *m = *n;
+    *n = temp;
+}
+
+void selectSort(int arr[], int length){
+    for(int i = 1;i < length;i++){
+        for(int k = i;k > 0;k--){
+            if(arr[k - 1] <= arr[k])
+                break;
+            swap(&arr[k], &arr[k - 1]);
+        }
+    }
+}
+
+int main(){
+    int n;
+    int array[N];
+    printf("ÇëÊäÈë%d¸öÊý:", N);
+    for(int i = 0;i < N;i++)
+        if(scanf("%d", &n) != EOF)
+            array[i] = n;
+        else
+            return 1;
+    selectSort(array, N);
+    for(int i = 0;i < N;i++)
+        printf("%d ", array[i]);
+    putchar('\n');
+    return 0;
+}

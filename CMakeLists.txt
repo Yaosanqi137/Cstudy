@@ -16,4 +16,7 @@ add_library(CStudy
         24年暑假写的/Bubble.c
         24年暑假写的/Calculate.c
         24年暑假写的/Dec_to_Hex.c
-        24年暑假写的/Hex_to_Dec_Remake.c)
+        24年暑假写的/Hex_to_Dec_Remake.c
+        学校上课写的/9.HomeWork_6/Bubble.c
+        学校上课写的/9.HomeWork_6/Selection.c
+        学校上课写的/9.HomeWork_6/Insert.c)
