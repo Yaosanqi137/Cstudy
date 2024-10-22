@@ -23,7 +23,7 @@ void selectSort(int arr[], int length){
 int main(){
     int n;
     int array[N];
-    printf("ÇëÊäÈë%d¸öÊı:", N);
+    printf("è¯·è¾“å…¥%dä¸ªæ•°:", N);
     for(int i = 0;i < N;i++)
         if(scanf("%d", &n) != EOF)
             array[i] = n;
