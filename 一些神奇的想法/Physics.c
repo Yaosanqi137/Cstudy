@@ -15,13 +15,19 @@ typedef struct {
     double force[2];
 } Physics;
 
+double module(double x, double y);
 double distance(double pos1[2], double pos2[2]);
 double sinDirect(double pos1[2], double pos2[2]);
 double cosDirect(double pos1[2], double pos2[2]);
 void gravity(Physics *particle1, Physics *particle2);
+void centripetalForce(Physics *particle1, Physics *particle2);
 void crash(Physics *particle1, Physics *particle2);
 void moveHandler(Physics *particle);
 void simulation(Physics particles[], int number, int total);
+
+double module(double x, double y){
+    return sqrt(x * x + y * y);
+}
 
 double distance(double pos1[2], double pos2[2]){
     return sqrt(pow((pos1[0] - pos2[0]), 2) + pow((pos1[1] - pos2[1]), 2));
@@ -45,16 +51,18 @@ double cosDirect(double pos1[2], double pos2[2]){
 
 void gravity(Physics *particle1, Physics *particle2){
     double dist = distance(particle1->position, particle2->position);
-    if(dist == 0){
+    if(dist == 0)
         return;
-    }
     double gravityForce = G * particle1->mass * particle2->mass / (dist * dist);
     particle1->force[0] += gravityForce * cosDirect(particle1->position, particle2->position);
     particle1->force[1] += gravityForce * sinDirect(particle1->position, particle2->position);
 }
 
-double centripetalForce(){
-
+void centripetalForce(Physics *particle1, Physics *particle2){
+    double dist = distance(particle1->position, particle2->position), directX, directY;
+    if(dist == 0)
+        return;
+    // 确保力的方向垂直于速度
 }
 
 void moveHandler(Physics *particle){
