@@ -1,6 +1,7 @@
 // 6.1 Selection
 #include <stdio.h>
 #define N 5
+#define M 0
 
 int temp;
 
@@ -34,8 +35,12 @@ int main(){
             return 1;
     selectSort(array, N);
     printf("ÅÅĞò½áÊøÎª:");
-    for(int i = 0;i < N;i++)
-        printf("%d ", array[i]);
+    if(M)
+        for(int i = 0;i < N;i++)
+            printf("%d ", array[i]);
+    else
+        for(int i = N - 1;i >= 0;i--)
+            printf("%d ", array[i]);
     putchar('\n');
     return 0;
 }

@@ -1,6 +1,7 @@
 // 6.2 bubble
 #include <stdio.h>
-#define N 5
+#define N 6
+#define M 1
 
 void bubbleSort(int arr[], int length){
     int temp;
@@ -18,16 +19,20 @@ void bubbleSort(int arr[], int length){
 int main(){
     int n;
     int array[N];
-    printf("è¯·è¾“å…¥%dä¸ªæ•°:", N);
+    printf("ÇëÊäÈë%d¸öÊı:", N);
     for(int i = 0;i < N;i++)
         if(scanf("%d", &n) != EOF)
             array[i] = n;
         else
             return 1;
     bubbleSort(array, N);
-    printf("æ’åºç»“æŸä¸º:");
-    for(int i = 0;i < N;i++)
-        printf("%d ", array[i]);
+    printf("ÅÅĞò½áÊøÎª:");
+    if(M)
+        for(int i = 0;i < N;i++)
+            printf("%d ", array[i]);
+    else
+        for(int i = N - 1;i >= 0;i--)
+            printf("%d ", array[i]);
     putchar('\n');
     return 0;
 }
