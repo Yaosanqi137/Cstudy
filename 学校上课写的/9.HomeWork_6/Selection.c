@@ -11,8 +11,9 @@ void swap(int *m, int *n){
 }
 
 void selectSort(int arr[], int length){
-    int key = 0;
+    int key;
     for(int i = 0;i < length;i++){
+        key = i;
         for(int k = i + 1;k < length;k++){
             if(arr[k] < arr[key]){
                 key = k;
@@ -25,14 +26,14 @@ void selectSort(int arr[], int length){
 int main(){
     int n;
     int array[N];
-    printf("è¯·è¾“å…¥%dä¸ªæ•°:", N);
+    printf("ÇëÊäÈë%d¸öÊý:", N);
     for(int i = 0;i < N;i++)
         if(scanf("%d", &n) != EOF)
             array[i] = n;
         else
             return 1;
     selectSort(array, N);
-    printf("æŽ’åºç»“æŸä¸º:");
+    printf("ÅÅÐò½áÊøÎª:");
     for(int i = 0;i < N;i++)
         printf("%d ", array[i]);
     putchar('\n');
