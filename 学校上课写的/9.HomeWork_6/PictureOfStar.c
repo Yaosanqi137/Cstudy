@@ -3,10 +3,10 @@
 
 int main(){
     int n;
-    printf("璇疯緭鍏ユ暣鏁皀(1 <= n <= 20):");
+    printf("请输入整数n(1 <= n <= 20):");
     scanf("%d", &n);
     if(n < 1 || n > 20){
-        printf("閿欒杈撳叆\n");
+        printf("错误输入\n");
         return 1;
     }
     for(int i = 1;i <= n;i++) {

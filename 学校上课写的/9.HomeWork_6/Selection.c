@@ -32,6 +32,7 @@ int main(){
         else
             return 1;
     selectSort(array, N);
+    printf("排序结束为:");
     for(int i = 0;i < N;i++)
         printf("%d ", array[i]);
     putchar('\n');

@@ -23,13 +23,14 @@ void selectSort(int arr[], int length){
 int main(){
     int n;
     int array[N];
-    printf("è¯·è¾“å…¥%dä¸ªæ•°:", N);
+    printf("ÇëÊäÈë%d¸öÊı:", N);
     for(int i = 0;i < N;i++)
         if(scanf("%d", &n) != EOF)
             array[i] = n;
         else
             return 1;
     selectSort(array, N);
+    printf("ÅÅĞò½áÊøÎª:");
     for(int i = 0;i < N;i++)
         printf("%d ", array[i]);
     putchar('\n');
