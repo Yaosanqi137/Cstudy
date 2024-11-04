@@ -8,7 +8,8 @@ void process(int b[10][10], int m){
     for(k = 2; k <= m * m; k++){
         i--; j++;
         if((i < 0) && (j >= m)){
-            i += 2; j--;
+            i += 2;
+            j--;
         }
         if(i < 0)
             i = m - 1;

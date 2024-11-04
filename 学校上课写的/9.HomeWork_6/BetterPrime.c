@@ -3,7 +3,7 @@
 #include <time.h>
 #define N 100000000
 
-int arr[N + 1];
+int arr[N + 1]; // 全局变量初始值默认为0
 
 int main(){
     int i, j, end, start,count = 0;
@@ -19,7 +19,7 @@ int main(){
     for(i = 3;i <= N;i += 2)
         if(!arr[i])
             count++;
-    printf("100000000浠ュ唴鐨勭礌鏁版湁: %d涓猏n", count);
-    printf("鑰楁椂: %dms\n", end - start);
+    printf("100000000以内的素数有: %d个\n", count);
+    printf("耗时: %dms\n", end - start);
     return 0;
 }
