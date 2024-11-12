@@ -53,11 +53,10 @@ void quickSort(int array[], int left, int right){
 }
 
 int main(){
-    int sheet, blueBalls[BMAX], redBalls[RMAX], redChoice[RN], blueChoice[BN], copy;
+    int sheet, blueBalls[BMAX], redBalls[RMAX], redChoice[RN], blueChoice[BN];
     srand(time(NULL));
     printf("How many lotteries do you want to buy(1~9):");
     scanf("%d", &sheet);
-    copy = sheet;
     printf("They are:\n");
     for(int i = 1; i <= sheet; i++){
         init(blueBalls, BMAX);
