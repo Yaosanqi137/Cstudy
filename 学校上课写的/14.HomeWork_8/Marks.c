@@ -42,11 +42,13 @@ int main(){
         stuAve[n] = scoreAve(C, marks[n]);
         printf("第%d个同学的平均分为%.2lf\n", n + 1, stuAve[n]);
     }
+    printf("\n");
     // 每位学生的平均分
     for(int n = 0; n < C; n++){
         subjAve[n] = classAve(S, C, n, marks);
         printf("第%d门课程的平均分为%.2lf\n", n + 1, subjAve[n]);
     }
+    printf("\n");
     // 全局最高分
     for(int i = 0; i < S; i++){
         for(int j = 0; j < C; j++){
@@ -58,6 +60,7 @@ int main(){
         }
     }
     printf("最高分为%.1lf,是第%d个学生的第%d门课程\n", highest, stu + 1, subj + 1);
+    printf("\n");
     // 最高分和对应的学生、科目
     sums = sum(S, stuAve);
     powSums = powSum(S, stuAve);

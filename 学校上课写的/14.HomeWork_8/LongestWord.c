@@ -4,15 +4,15 @@
 
 int main(){
     char str[64], longest[64] = "";
-    int strlen, len = 0;
+    int len = 0;
     printf("请输入字符序列:");
     do{
-        scanf("%s%n", str, &strlen);
-        if(strlen > len){
+        scanf("%s", str);
+        if(strlen(str) > len){
             strcpy(longest, str);
-            len = strlen;
+            len = strlen(str);
         }
     }while(getchar() != '\n');
-    printf("最长单词为:%s", longest);
+    printf("最长单词为:%s\n", longest);
     return 0;
 }

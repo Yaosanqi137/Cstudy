@@ -2,10 +2,15 @@
 #include <stdio.h>
 
 int main(){
-    int doubleArr[3][4];
-    for(int i = 0; i < 3; i++)
+    int doubleArr[3][4] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
+    for(int i = 0; i < 3; i++){
         for(int j = 0; j < 4; j++)
-            scanf("%d", &doubleArr[i][j]);
+            printf("%d ", doubleArr[i][j]);
+        printf("\n");
+    }
+//    for(int i = 0; i < 3; i++)
+//        for(int j = 0; j < 4; j++)
+//            scanf("%d", &doubleArr[i][j]);
     // 生成判断数列
     int checkCol[3][4] = {0};
     int checkRow[3][4] = {0};

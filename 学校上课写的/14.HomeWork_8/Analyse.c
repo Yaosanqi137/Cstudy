@@ -8,13 +8,13 @@ int main(){
     scanf("%d", &N);
     count = N * N;
     for(k = 0; k < N; k++){
-        for(i = k; i < N - k; i++)
+        for(i = k; i < N - k; i++) // 横着的,自左向右
             data[k][i] = count--;
-        for(i = k + 1; i < N - k; i++)
+        for(i = k + 1; i < N - k; i++) // 竖着的，自上向下
             data[i][N - k - 1] = count--;
-        for(i = N - k - 2; i > k; i--)
+        for(i = N - k - 2; i > k; i--) // 横着的，自右向左
             data[N - k - 1][i] = count --;
-        for(i = N - k - 1; i > k; i--)
+        for(i = N - k - 1; i > k; i--) // 竖着的，自下向上
             data[i][k] = count--;
     }
     if(N % 2 != 0)
