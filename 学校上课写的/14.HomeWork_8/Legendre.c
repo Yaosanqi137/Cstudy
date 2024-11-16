@@ -18,4 +18,5 @@ int main(){
     printf("ÇëÊäÈën, x:");
     scanf("%d,%lf", &n, &x);
     printf("lrd=%lf\n", legendre(n, x));
+    return 0;
 }
