@@ -1,5 +1,5 @@
 #include <stdio.h>
-#define QUEEN 12
+#define QUEEN 4
 
 int solutions;
 int placed[QUEEN][QUEEN];

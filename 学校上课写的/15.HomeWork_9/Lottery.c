@@ -20,7 +20,7 @@ void init(int array[], int n){
 }
 
 int myRand(int array[], int end, int pos){
-    int k = rand() % (end - pos);
+    int k = rand() % (end - pos + 1);
     swap(array, k, end - pos);
     return array[end - pos];
 }
