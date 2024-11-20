@@ -16,7 +16,7 @@ int isLeapYear(int yyyy){
 int allDays(int sy, int sm, int sd, int ty, int tm, int td){
     int total = 0;
     if(sy == ty && sm == tm)
-        return td - sd + 1;
+        return td - sd;
     for(int yyyy = sy + 1; yyyy < ty; yyyy++)
         total += isLeapYear(yyyy) ? 366 : 365;
     for(int mm = sm + 1; mm <= (sy == ty ? tm - 1 : 12); mm++)
@@ -24,7 +24,7 @@ int allDays(int sy, int sm, int sd, int ty, int tm, int td){
     for(int mm = 1; mm < (sy == ty ? 1 : tm); mm++)
         total += months[isLeapYear(ty)][mm - 1];
     total += (months[isLeapYear(sy)][sm - 1] - sd + 1) + td;
-    return total;
+    return total - 1;
 }
 
 int main(){
