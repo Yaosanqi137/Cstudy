@@ -1,6 +1,7 @@
 // 8.16
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 #define MAX_SIZE 64
 #define MAX_NUM 32
 #define MAX_LEN 10
@@ -12,21 +13,23 @@ int isNum(char ch){
 }
 
 void splitNum(char str[]){
-    char nums[MAX_NUM][MAX_LEN] = {""};
-    int count = 0, check = 0, k = 0;
+    char numStr[MAX_NUM][MAX_LEN] = {""};
+    int count = 0, check = 0, k = 0, nums[MAX_NUM];
     printf("%s\n", str);
     for(int i = 0; str[i]; i++){
         if(isNum(str[i])){
             if(!check)
                 check = 1, count++;
-            nums[count - 1][k++] = str[i];
+            numStr[count - 1][k++] = str[i];
         }else{
             check = 0, k = 0;
         }
     }
     printf("共有%d个整数,分别为:\n", count);
-    for(int j = 0; j < count; j++)
-        printf("%s ", nums[j]);
+    for(int j = 0; j < count; j++){
+        nums[j] = atoi(numStr[j]);
+        printf("%d ", nums[j]);
+    }
     if(count)
         putchar('\n');
 }

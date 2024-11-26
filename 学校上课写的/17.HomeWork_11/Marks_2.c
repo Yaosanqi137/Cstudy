@@ -14,7 +14,7 @@ float ave(float (*p)[SUB]){
 float *fail(float (*p)[SUB]){
     int count = 0;
     for(int j = 0; j < SUB; j++)
-        if((*p)[j] < 60)
+        if((*p)[j] <= 60)
             count++;
     if(count >= 2)
         return *p;
@@ -26,11 +26,11 @@ float *good(float (*p)[SUB]){
     int count = 0;
     float sum = 0;
     for(int j = 0; j < SUB; j++){
-        if((*p)[j] > 85)
+        if((*p)[j] >= 85)
             count++;
         sum += (*p)[j];
     }
-    if(count == 5 || (sum / SUB) > 90)
+    if(count == 5 || (sum / SUB) >= 90)
         return *p;
     else
         return NULL;
@@ -38,14 +38,15 @@ float *good(float (*p)[SUB]){
 
 int main(){
     float mark[STU][SUB] = {
-            {84, 91, 93, 92, 87.5},
-            {63, 65, 87, 72, 92},
-            {51, 78, 77, 65, 47},
-            {85, 86, 87, 90, 84},
-            {87, 85, 91, 85, 89},
-            {73, 56, 47, 52, 81},
-            {99, 98, 97, 58, 98}
+            {84, 91, 93, 92, 87.5}, // {84, 91, 93, 92, 87.5}
+            {63, 65, 87, 72, 92},   // {63, 65, 87, 72, 92}
+            {51, 78, 77, 65, 47},   // {51, 78, 77, 65, 47}
+            {85, 86, 87, 90, 84},   // {85, 86, 87, 90, 84}
+            {87, 85, 91, 85, 89},   // {87, 85, 91, 85, 89}
+            {73, 56, 47, 52, 81},   // {73, 56, 47, 52, 81}
+            {99, 98, 97, 58, 98}    // {99, 98, 97, 58, 98} 原始数据
             }, *p, sum;
+    int check = 1;
     for(int i = 0; i < STU; i++){
         printf("(%d)", i + 1);
         for(int j = 0; j < SUB; j++)
@@ -53,7 +54,7 @@ int main(){
         putchar('\n');
     }
     putchar('\n');
-    printf("第1门课程的平均分为%.2f\n\n", ave(mark));
+    printf("第1门课程的平均分为 %.2f\n\n", ave(mark));
     printf("两门以上成绩不及格的学生为:\n");
     for(int j = 0; j < STU; j++){
         p = fail(&mark[j]);
@@ -64,16 +65,25 @@ int main(){
                 printf("%.1f ", *p);
                 sum += *p;
             }
-            printf("%.2f\n", sum / STU);
+            printf("  %.2f\n", sum / SUB);
         }
     }
     putchar('\n');
     printf("平均成绩在90分以上或全部成绩在85分以上的学生的信息为:\n");
     for(int j = 0; j < STU; j++){
-        if(good(&mark[j])){
+        p = good(&mark[j]);
+        if(p){
+            check  = 0;
             printf("(%d) ", j + 1);
+            sum = 0;
+            for(int k = 0; k < SUB; k++, p++){
+                printf("%.1f ", *p);
+                sum += *p;
+            }
+            printf("  %.2f\n", sum / SUB);
         }
     }
-    putchar('\n');
+    if(check)
+        putchar('\n');
     return 0;
 }
