@@ -8,7 +8,7 @@ void josephRing(int arr[], int people, int num){
         count++;
         if(count == num){
             printf("%4d", now + 1);
-            if(!(out++ % 10))
+            if(!(++out % 10))
                 putchar('\n');
             arr[pre] = arr[now];
             count = 0;
