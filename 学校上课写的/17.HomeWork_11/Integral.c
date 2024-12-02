@@ -16,7 +16,7 @@ double f3(double x){
 }
 
 void printMenu(){
-    printf("1.sin(x) 2.cos(x) 3.exp(x)+1 4.exit\n");
+    printf("1.sin(x) 2.cos(x) 3.exp(x)+1 0.exit\n");
     printf("请选择:");
 }
 
@@ -43,7 +43,7 @@ int main(){
             case 3:
                 func = f3;
                 break;
-            case 4:
+            case 0:
                 return 0;
         }
         printf("请输入积分下限和上限:");
@@ -54,6 +54,6 @@ int main(){
             result = -integral(b, a, func);
         else if((a - b) < 1e-5)
             result = 0;
-        printf("result = %lf\n", result);
+        printf("result = %lf\n\n", result);
     }while(mode != 4);
 }

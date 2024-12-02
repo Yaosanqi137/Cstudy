@@ -38,7 +38,7 @@ int main(){
 //    char str[64] = "A213x456 17960? 302tab5876";
     char str[MAX_SIZE];
     fgets(str, MAX_SIZE - 1, stdin);
-    str[strlen(str) - 2] = '\0';
+    str[strlen(str) - 1] = '\0';
     splitNum(str);
     return 0;
 }
