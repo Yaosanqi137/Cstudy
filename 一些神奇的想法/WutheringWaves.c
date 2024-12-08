@@ -6,13 +6,13 @@
 #define UP 0 // up的人物
 #define SMALL 10 // 小保底
 #define BIG 80 // 大保底
-#define MAX_TIME 160 // 一次性最多抽卡的次数
-#define FIVE_STAR 6 // 5星的个数
-#define FOUR_STAR 7 // 4星的个数
+#define MAX_TIME 1000 // 一次性最多抽卡的次数
+#define FIVE_STAR 4 // 5星的个数
+#define FOUR_STAR 5 // 4星的个数
 #define TRASH 14 // 三星装备
 
-char REWARD[REWARDS][MAX_LEN] = {"椿", "卡卡罗", "安可", "雪豹", "鉴心", "高豪聪", "黄竣淘",
-                                 "丹瑾", "秧秧", "四星装备1", "四星装备2", "四星装备3", "轻波级高豪聪", "轻波级黄竣淘",
+char REWARD[REWARDS][MAX_LEN] = {"高豪聪", "卡卡罗", "卡卡罗", "雪豹", "雪豹",
+                                 "丹瑾", "秧秧", "四星装备1", "四星装备2", "四星装备3",
                                  "杂鱼三星装备"};
 
 int result[MAX_TIME];
