@@ -6,47 +6,38 @@
 #include <math.h>
 
 // 定义的宏
-#define ALL_KEYWORD 37  // 所有关键词的数量
-#define DATAFILES 16    // 最大数据文件量
-#define ALL_SYMBOL 27   // 所有运算符、界限符和逻辑符
-#define ALL_COMMAND 13  // 所有预编译指令
-#define NUMBER 10       // 所有数字
-#define KEYWORD_CODE 0  // 关键字的种别码起始处
-#define SYMBOL_CODE 37  // 各种符号的种别码起始处
-#define NUMBER_CODE 64  // 数字的种别码起始处
-#define COMMAND_CODE 74 // 预编译指令的种别码起始处
-#define STRING_CODE 87  // 字符串种别码
-#define STRUCT_CODE 88  // 结构体种别码
-#define FUNC_CODE 89    // 函数种别码
-#define ENUM_CODE 90    // 枚举种别码
-#define HEADER_CODE 91  // 头文件种别码
-#define OTHER_CODE 92   // 预编译指令或其他的标识符种别码
-#define MAX_LEN 4096    // 二元组最长长度
+#define MAX_LEN 4096     // 二元组最大长度
+#define SEN_LEN 256      // 最长句长
+#define FILES 2          // 总文件数量
+#define ALL_KEYWORD 37   // 所有关键词的数量
+#define ALL_SYMBOL 27    // 所有运算符、界限符和逻辑符
+#define ALL_COMMAND 13   // 所有预编译指令
+#define NUMBER 10        // 所有数字
+#define KEYWORD_CODE 1   // 关键字的种别码起始处
+#define SYMBOL_CODE 38   // 各种符号的种别码起始处
+#define NUMBER_CODE 65   // 数字的种别码起始处
+#define COMMAND_CODE 75  // 预编译指令的种别码起始处
+#define STRING_CODE 88   // 字符串种别码
+#define STRUCT_CODE 89   // 标识符种别码
+#define OTHER_CODE 93    // 预编译指令或其他的标识符种别码
 
-
-
-/*二元组种别码分配
- * 0 ~ 36  - 关键字
- * 37 ~ 63 - 各种符号
- * 64 ~ 73 - 数字
- * 74 ~ 86 - 预编译指令
- * 87 ------ 字符串标记
- * 88 ------ 结构体标记
- * 89 ------ 函数标记
- * 90 ------ 枚举标记
- * 91 ------ 头文件标记
- * 92 ------ 预编译指令或其他的标识符
- * 同时，使用二元组进行存储
+/* 二元组种别码分配
+ * 1 ~ 37  - 关键字
+ * 38 ~ 64 - 各种符号
+ * 65 ~ 74 - 数字
+ * 75 ~ 87 - 预编译指令
+ * 88 ------ 字符串标记
+ * 89 ------ 标识符
+ * 0 ------- 向量终止符
+ * 同时，使用使用二元组进行存储
  * e.g. int main(){printf("helloworld"); return 0;}
- * (3, "int"), (89, "main"), ... */
-
-
+ * (4, int), (89, main) ...) */
 
 // 数据存放路径
-char *DATA_ADDR = "/data/";
+const char *DATAFILE = "Data.c";
 
 // 被查重代码路径
-char *CHECKFILE = "/check/";
+const char *CHECKFILE = "TestCode.c";
 
 // 用于存储所有运算符和分界符
 char *SYMBOLS[] = {"+", "-", "*", "/", "%", "=", "<", ">", ">=", "<=",
@@ -64,24 +55,79 @@ char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
                     };
 
 // 用于存储所有预编译指令
-char *COMMANDS[] = {"#if", "endif", "#include", "#define", "#error", "#else", "#ifdef",
-                      "ifndef", "#undef", "#line", "#include_next", "#pragma", "#warning"
+char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "ifdef",
+                      "ifndef", "undef", "line", "include_next", "pragma", "warning"
                     };
 
-struct Tuple { // 二元组
-    int count;
-    char *word;
-} TUPLE[MAX_LEN];
+// 缓冲区
+char *buffer;
 
+// 单字最长长度
+char *word_A, *word_B, *word_C;
+
+// 用于计算的二元组
+typedef struct {
+    int code[MAX_LEN];
+    char str[MAX_LEN];
+} TUPLE[FILES];
+
+int isNum(char *words){
+    if(words[0] >= '0' && words[0] <= '9')
+        return 1;
+    return 0;
+}
+
+/* TODO
+ * 余弦相似度计算函数 */
+double cosCalculate(){
+
+}
+
+/* TODO
+ * 比较函数
+ * 使用生成好的向量计算查重 */
 void compare(){
 
 }
 
-void fileProcessor(){
+/* TODO
+ * 处理文件，将程序转换成向量 */
+void fileProcessor(FILE *fp){
+    int count = 0;
+    while(fgets(buffer, SEN_LEN, fp) != NULL){
+        word_A = strtok(buffer, " \t\n");
+        while(word_A != NULL){
+            printf("%s\n\n", word_A);
 
+            word_B = word_A;
+            strchr(word_B, );
+            while(*word_B != '\0'){
+
+                word_B++;
+            }
+
+            word_A = strtok(NULL, " \t\n");
+            count++;
+        }
+    }
 }
 
 int main(){
     printf("**请将模板C语言程序放在data文件夹内，被查重的程序放在check文件夹内**\n");
-    printf("**开始对数据进行处理**");
+    printf("**开始对数据进行处理**\n");
+    // 程序初始输出
+    FILE *fp = NULL;
+    fp = fopen(DATAFILE, "r");
+    if(fp != NULL){
+        fileProcessor(fp);
+        if(fclose(fp)){
+            perror("文件无法正常关闭！\n");
+            return EXIT_FAILURE;
+        }else
+            printf("文件已关闭\n");
+    }else{
+        perror("文件打开失败，请检查文件是否正常或Data.c文件是否存在!\n");
+        return EXIT_FAILURE;
+    }
+    return 0;
 }
