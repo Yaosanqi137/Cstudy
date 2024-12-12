@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <math.h>
 
 // 定义的宏
 #define MAX_LEN 4096     // 二元组最大长度
@@ -63,7 +64,7 @@ char WORD[SEN_LEN];
 
 // 用于计算的二元组
 typedef struct {
-    int code[MAX_LEN];
+    double code[MAX_LEN];
     char str[MAX_LEN][SEN_LEN];
 } TUPLE[FILES];
 
@@ -149,7 +150,7 @@ int fileProcessor(FILE *fp, int fileIndex){
             }else{ // 处理符号
                 if(*ptr == '"'){
                     ptr++;
-                    while(*ptr != '\"' || *ptr == '\"' && *(ptr - 1) == '\\')
+                    while(*ptr != '\"' || *ptr == '\"' && *(ptr - 1) == '\\') // warning! 如果原程序有语法错误，或字符串过长会导致指针越界
                         ptr++;
                     tuples[fileIndex].code[count] = STRING_CODE;
                     strcpy(tuples[fileIndex].str[count++], "STRING");
@@ -168,8 +169,41 @@ int fileProcessor(FILE *fp, int fileIndex){
     return count;
 }
 
+double average(double array[MAX_LEN], int len){
+    double sum = 0;
+    for(int i = 0; i < len; i++)
+        sum += array[i];
+    return sum / len;
+}
+
+// PCA降维处理
+double *PCA(double array[MAX_LEN], int len, int target_len){
+    double PCArr[target_len];
+    double ave = average(array, len);
+    for(int i = 0; i < len; i++)
+        array[i] -= ave; // 计算每个数据点的特征值
+
+}
+
+// 余弦相似度计算函数 TODO
+double cosSim(double code1[MAX_LEN], double code2[MAX_LEN], int len1, int len2){
+    if(!len2 || !len1)
+        return 0;
+    int len;
+    double model1 = 0, model2 = 0, product = 0, result;
+    if(len1 > len2){
+        code1 = PCA(code1, len1, len2);
+        len = len2;
+    }else if(len2 > len1){
+        code2 = PCA(code2, len1, len2);
+        len = len1;
+    }
+
+}
+
 int main() {
     printf("**请将模板C语言程序命名为 Data.c，被查重程序命名为 TestCode.c，然后将它们和本程序放在一起**\n");
+    printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**");
     printf("**开始对数据进行处理**\n");
     // 程序开始
     FILE *fp = fopen(DATAFILE, "r");
@@ -193,11 +227,20 @@ int main() {
         return EXIT_FAILURE;
     } // 对被查重程序进行处理
 
-    for(int i = 0; i < FILES; i++){
+    for(int i = 0, j; i < FILES; i++){
         printf("File: %s\n", !i ? CHECKFILE : DATAFILE);
-        for(int j = 0; j < MAX_LEN && tuples[i].code[j] != 0; j++)
-            printf("(%d, %s)\n", tuples[i].code[j], tuples[i].str[j]);
+        for(j = 0; j < MAX_LEN && tuples[i].code[j] != 0; j++){
+            printf("(%lf, %s)  ", tuples[i].code[j], tuples[i].str[j]);
+            if(!(j % 6) && j)
+                putchar('\n');
+        }
+        putchar('\n');
+        if(j % 6)
+            putchar('\n');
     } // 输出提取的二元组，方便debug和查看效果
+
+    printf("查重成功!结果为: %lf%%", cosSim(tuples[1].code, tuples[0].code, count[1], count[0]));
+    // 输出查重结果
 
     return 0;
 }
