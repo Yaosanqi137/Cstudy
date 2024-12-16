@@ -169,36 +169,71 @@ int fileProcessor(FILE *fp, int fileIndex){
     return count;
 }
 
-double average(double array[MAX_LEN], int len){
-    double sum = 0;
-    for(int i = 0; i < len; i++)
-        sum += array[i];
-    return sum / len;
-}
+//void dataProcess(double array[], double len, double target){
+//    if(len <= target)
+//        return;
+//    double ave = 0;
+//    for(int i = target; i < len; i++)
+//        ave += array[i];
+//    ave /= (len - target);
+//    for(int i = 0; i < target; i++)
+//        array[i] += ave;
+//}
 
-// PCA降维处理
-double *PCA(double array[MAX_LEN], int len, int target_len){
-    double PCArr[target_len];
-    double ave = average(array, len);
-    for(int i = 0; i < len; i++)
-        array[i] -= ave; // 计算每个数据点的特征值
+//double cosSim(double code1[], double code2[], int len1, int len2){
+//    if(!len2 || !len1)
+//        return 0;
+//    double model1 = 0, model2 = 0, product = 0, result;
+//    int target;
+//
+//    for(int i = 0; i < len1; i++)
+//        code1[i] /= 100;
+//    for(int i = 0; i < len2; i++)
+//        code2[i] /= 100;
+//
+//    if(len1 > len2){
+//        target = len2;
+//        dataProcess(code1, len1, target);
+//    }else if(len1 < len2){
+//        target = len1;
+//        dataProcess(code2, len2, target);
+//    }else
+//        target = len1;
+//
+//    for(int i = 0; i < target; i++){
+//        product += code1[i] * code2[i];
+//        model2 += code2[i] * code2[i];
+//        model1 += code1[i] * code1[i];
+//    }
+//
+//    model2 = sqrt(model2);
+//    model1 = sqrt(model1);
+//    result = product / (model2 * model1) * 100;
+//    return result;
+//}
 
-}
-
-// 余弦相似度计算函数 TODO
-double cosSim(double code1[MAX_LEN], double code2[MAX_LEN], int len1, int len2){
+double cosSim(double code1[], double code2[], int len1, int len2){
     if(!len2 || !len1)
         return 0;
-    int len;
     double model1 = 0, model2 = 0, product = 0, result;
-    if(len1 > len2){
-        code1 = PCA(code1, len1, len2);
-        len = len2;
-    }else if(len2 > len1){
-        code2 = PCA(code2, len1, len2);
-        len = len1;
+
+    for(int i = 0; i < len1; i++)
+        code1[i] /= 100;
+    for(int i = 0; i < len2; i++)
+        code2[i] /= 100;
+
+    int longest = len1 > len2 ? len1 : len2;
+
+    for(int i = 0; i < longest; i++){
+        product += code1[i] * code2[i];
+        model2 += code2[i] * code2[i];
+        model1 += code1[i] * code1[i];
     }
 
+    model2 = sqrt(model2);
+    model1 = sqrt(model1);
+    result = product / (model2 * model1) * 100;
+    return result;
 }
 
 int main() {
@@ -235,7 +270,7 @@ int main() {
                 putchar('\n');
         }
         putchar('\n');
-        if(j % 6)
+        if(j % 6 && j)
             putchar('\n');
     } // 输出提取的二元组，方便debug和查看效果
 
