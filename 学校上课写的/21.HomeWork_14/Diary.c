@@ -11,7 +11,7 @@ const char *BACKUP_FILE = ".\\E\\backup\\backup.dat";
 
 const char *HISTORY_FILE = ".\\D\\diary\\history.txt";
 
-const char *weather[] = {"多云", "晴", "雨", "雪", ""};
+const char *weather[] = {"多云", "晴", "雨", "雪", "下冰雹", "核辐射", "伽马射线暴"};
 
 const char *context[] = {
         "　　我去，今天有点走运，在路上捡到10块钱哈哈哈！\n但是可惜的是，我不小心掉水沟里了嘤嘤嘤。\n",
@@ -31,7 +31,7 @@ char buffer[MAX_LEN];
 
 // 写日记函数
 void diary(FILE *fp){
-    int temp1 = rand() % 5, temp2 = rand() % 10;
+    int temp1 = rand() % 7, temp2 = rand() % 10;
     fprintf(fp, "日期: %s  天气: %s\n", __DATE__, *(weather + temp1));
     fputs(*(context + temp2), fp);
     fputc('\n', fp);
@@ -40,6 +40,18 @@ void diary(FILE *fp){
 
 // 文件复制函数
 int fileCopy(FILE *from, FILE *to){
+    char ch;
+    if(from == NULL || to == NULL)
+        return EXIT_FAILURE;
+    while((ch = fgetc(from)) != EOF)
+        fwrite(&ch, sizeof(char), 1, to);
+    fclose(from);
+    fclose(to);
+    return EXIT_SUCCESS;
+}
+
+// 文本插入函数
+int fileInsert(FILE *from, FILE *to){
     char ch;
     if(from == NULL || to == NULL)
         return EXIT_FAILURE;
@@ -90,7 +102,7 @@ int main(){
     printf("正在将today.txt中的内容插入到history.txt中...\n");
     source = fopen(DIARY_FILE, "r");
     insert = fopen(HISTORY_FILE, "a+");
-    if(!fileCopy(source, insert))
+    if(!fileInsert(source, insert))
         printf("插入成功!\n");
     else{
         perror("插入失败");
