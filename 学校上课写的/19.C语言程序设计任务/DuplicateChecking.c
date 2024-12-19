@@ -27,11 +27,8 @@
  * e.g. int main(){printf("helloworld"); return 0;}
  * (4, int), (89, main) ...) */
 
-// 数据存放路径
-const char *DATAFILE = "Data.c";
-
-// 被查重代码路径
-const char *CHECKFILE = "TestCode.c";
+char DATAFILE[200];     // 数据存放路径
+char CHECKFILE[200];    // 被查重代码路径
 
 // 用于存储所有关键字
 char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
@@ -47,11 +44,8 @@ char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "ifdef"
                     "ifndef", "undef", "line", "include_next", "pragma", "warning"
 };
 
-// 单句缓冲区
-char BUFFER[SEN_LEN];
-
-// 单字缓冲区
-char WORD[SEN_LEN];
+char BUFFER[SEN_LEN];   // 单句缓冲区
+char WORD[SEN_LEN];     // 单词缓冲区
 
 // 用于计算的二元组
 typedef struct {
@@ -116,7 +110,7 @@ int fileProcessor(FILE *fp, int fileIndex){
                 while(isalnum(*ptr) || *ptr == '_')
                     ptr++;
                 len = ptr - start;
-                strncpy(WORD, start, len); // 讲单词和数字拷贝进单词缓冲区
+                strncpy(WORD, start, len); // 将单词和数字拷贝进单词缓冲区
                 WORD[len] = '\0';
                 // 用于截取数字或关键字或标识符
                 code = isKeyword(WORD);
@@ -129,6 +123,7 @@ int fileProcessor(FILE *fp, int fileIndex){
                 if(code){
                     tuples[fileIndex].code[count] = code;
                     strcpy(tuples[fileIndex].str[count++], WORD); // 处理关键字、标识符、预处理指令
+                    // fprintf(output, "%s", WORD); // 输出到文件
                 }
             }else{ // 处理符号
                 if(*ptr == '"'){
@@ -170,28 +165,36 @@ double cosSim(double code1[], double code2[], int len1, int len2){
 }
 
 int main() {
-    printf("**请将模板C语言程序命名为 Data.c，被查重程序命名为 TestCode.c，然后将它们和本程序放在一起**\n");
+    // printf("**请将模板C语言程序命名为 Data.c，被查重程序命名为 TestCode.c，然后将它们和本程序放在一起**\n");
+    printf("请输入第一个代码文件的路径：");
+    scanf("%s", DATAFILE);
+    printf("请输入第二个代码文件的路径：");
+    scanf("%s", CHECKFILE);
     printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**");
     printf("**开始对数据进行处理**\n");
     // 程序开始
     FILE *fp = fopen(DATAFILE, "r");
+    // FILE *out1 = fopen("pre_output/code1.c", "w");
     int count[FILES];
     if(fp != NULL){
         count[1] = fileProcessor(fp, 1);
+        // fclose(out1);
         fclose(fp);
         printf("文件已关闭\n");
     }else{
-        perror("文件打开失败，请检查文件是否正常或 Data.c 文件是否存在!\n");
+        perror("文件打开失败，请检查文件是否正常!\n");
         return EXIT_FAILURE;
     } // 对原程序进行处理
 
     fp = fopen(CHECKFILE, "r");
+    // FILE *out2 = fopen("pre_output/code2.c", "w");
     if(fp != NULL){
         count[0] = fileProcessor(fp, 0);
+        // fclose(out2);
         fclose(fp);
         printf("文件已关闭\n");
     }else{
-        perror("文件打开失败，请检查文件是否正常或 TestCode.c 文件是否存在!\n");
+        perror("文件打开失败，请检查文件是否正常!\n");
         return EXIT_FAILURE;
     } // 对被查重程序进行处理
 
