@@ -9,22 +9,19 @@
 #define SEN_LEN 256      // 最长句长
 #define FILES 2          // 总文件数量
 #define ALL_KEYWORD 37   // 所有关键词的数量
-#define ALL_SYMBOL 24    // 所有运算符、界限符和逻辑符
 #define ALL_COMMAND 13   // 所有预编译指令
 #define KEYWORD_CODE 1   // 关键字的种别码起始处
-#define SYMBOL_CODE 38   // 各种符号的种别码起始处
-#define COMMAND_CODE 62  // 预编译指令种别码起始处
-#define NUMBER_CODE 75   // 数字的种别码起始处
-#define STRING_CODE 76   // 字符串种别码
-#define IDEN_CODE 77     // 标识符种别码
+#define COMMAND_CODE 38  // 预编译指令种别码起始处
+#define NUMBER_CODE 51   // 数字的种别码起始处
+#define STRING_CODE 52   // 字符串种别码
+#define IDEN_CODE 53     // 标识符种别码
 
 /* 二元组种别码分配
  * 1 ~ 37  - 关键字
- * 38 ~ 61 - 各种符号
- * 62 ~ 74 - 预编译指令
- * 75 ------ 数字
- * 76 ------ 字符串标记
- * 77 ------ 标识符
+ * 38 ~ 50 - 预编译指令
+ * 51 ------ 数字
+ * 52 ------ 字符串标记
+ * 53 ------ 标识符
  * 0 ------- 向量终止符
  * 同时，使用使用二元组进行存储
  * e.g. int main(){printf("helloworld"); return 0;}
@@ -35,12 +32,6 @@ const char *DATAFILE = "Data.c";
 
 // 被查重代码路径
 const char *CHECKFILE = "TestCode.c";
-
-// 用于存储所有运算符和分界符
-char *SYMBOLS[] = {"+", "-", "*", "/", "%", "=", "<", ">",
-                   ";", ":", "[", "]", "{", "}", "(", ")",
-                   "&", "|", ",", "'", "\"", "!", ".", "#"
-                    };
 
 // 用于存储所有关键字
 char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
@@ -81,15 +72,7 @@ int isNum(char *word){
 int isKeyword(char *word){
     for (int i = 0; i < ALL_KEYWORD; i++)
         if (!strcmp(word, KEYWORDS[i]))
-            return KEYWORD_CODE + i;
-    return 0;
-}
-
-// 判断是否为符号
-int isSymbol(char *word){
-    for(int i = 0; i < ALL_SYMBOL; i++)
-        if(!strcmp(word, SYMBOLS[i]))
-            return SYMBOL_CODE + i;
+            return (KEYWORD_CODE + i) * (KEYWORD_CODE + i);
     return 0;
 }
 
@@ -110,7 +93,7 @@ int isCommand(char *word){
 // 处理文件，将程序分词，并将其转换成向量
 int fileProcessor(FILE *fp, int fileIndex){
     int count = 0, code, inComment = 0, len; // count:记录已录入的词数; code:临时存储判断函数的值; inComment:用于标记是否在多行注释中
-    char *start, *ptr, symbol[2]; // start:记录数字和单词的起始地址; ptr:指针; symbol: 用于存储符号，后期会删掉
+    char *start, *ptr; // start:记录数字和单词的起始地址; ptr:指针; symbol: 用于存储符号，后期会删掉
 
     while (fgets(BUFFER, SEN_LEN, fp) != NULL) {
         ptr = BUFFER; // 将指针指向此句句首
@@ -154,13 +137,6 @@ int fileProcessor(FILE *fp, int fileIndex){
                         ptr++;
                     tuples[fileIndex].code[count] = STRING_CODE;
                     strcpy(tuples[fileIndex].str[count++], "STRING");
-                }else{
-                    symbol[0] = *ptr, symbol[1] = '\0';
-                    code = isSymbol(symbol);
-                    if(code){
-                        tuples[fileIndex].code[count] = code;
-                        strcpy(tuples[fileIndex].str[count++], symbol);
-                    }
                 }
                 ptr++;
             }
@@ -168,49 +144,6 @@ int fileProcessor(FILE *fp, int fileIndex){
     }
     return count;
 }
-
-//void dataProcess(double array[], double len, double target){
-//    if(len <= target)
-//        return;
-//    double ave = 0;
-//    for(int i = target; i < len; i++)
-//        ave += array[i];
-//    ave /= (len - target);
-//    for(int i = 0; i < target; i++)
-//        array[i] += ave;
-//}
-
-//double cosSim(double code1[], double code2[], int len1, int len2){
-//    if(!len2 || !len1)
-//        return 0;
-//    double model1 = 0, model2 = 0, product = 0, result;
-//    int target;
-//
-//    for(int i = 0; i < len1; i++)
-//        code1[i] /= 100;
-//    for(int i = 0; i < len2; i++)
-//        code2[i] /= 100;
-//
-//    if(len1 > len2){
-//        target = len2;
-//        dataProcess(code1, len1, target);
-//    }else if(len1 < len2){
-//        target = len1;
-//        dataProcess(code2, len2, target);
-//    }else
-//        target = len1;
-//
-//    for(int i = 0; i < target; i++){
-//        product += code1[i] * code2[i];
-//        model2 += code2[i] * code2[i];
-//        model1 += code1[i] * code1[i];
-//    }
-//
-//    model2 = sqrt(model2);
-//    model1 = sqrt(model1);
-//    result = product / (model2 * model1) * 100;
-//    return result;
-//}
 
 double cosSim(double code1[], double code2[], int len1, int len2){
     if(!len2 || !len1)
@@ -262,19 +195,12 @@ int main() {
         return EXIT_FAILURE;
     } // 对被查重程序进行处理
 
-    for(int i = 0, j; i < FILES; i++){
-        printf("File: %s\n", !i ? CHECKFILE : DATAFILE);
-        for(j = 0; j < MAX_LEN && tuples[i].code[j] != 0; j++){
-            printf("(%lf, %s)  ", tuples[i].code[j], tuples[i].str[j]);
-            if(!(j % 6) && j)
-                putchar('\n');
-        }
-        putchar('\n');
-        if(j % 6 && j)
-            putchar('\n');
-    } // 输出提取的二元组，方便debug和查看效果
-
-    printf("查重成功!结果为: %lf%%", cosSim(tuples[1].code, tuples[0].code, count[1], count[0]));
+    double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
+    printf("查重成功!结果为: %lf%%\n", result);
+    if(result > 80)
+        printf("查重率过高，该程序可能存在抄袭现象！\n");
+    else
+        printf("查重率正常，该程序可能不存在抄袭现象\n");
     // 输出查重结果
 
     return 0;
