@@ -177,7 +177,7 @@ int main() {
     if(fp != NULL){
         count[1] = fileProcessor(fp, 1);
         fclose(fp);
-        printf("文件已关闭\n");
+        printf("%s 已处理\n", DATAFILE);
     }else{
         perror("文件打开失败，请检查文件是否正常!\n");
         return EXIT_FAILURE;
@@ -187,7 +187,7 @@ int main() {
     if(fp != NULL){
         count[0] = fileProcessor(fp, 0);
         fclose(fp);
-        printf("文件已关闭\n");
+        printf("%s 已处理\n", CHECKFILE);
     }else{
         perror("文件打开失败，请检查文件是否正常!\n");
         return EXIT_FAILURE;
