@@ -165,20 +165,17 @@ double cosSim(double code1[], double code2[], int len1, int len2){
 }
 
 int main() {
-    // printf("**请将模板C语言程序命名为 Data.c，被查重程序命名为 TestCode.c，然后将它们和本程序放在一起**\n");
     printf("请输入第一个代码文件的路径：");
     scanf("%s", DATAFILE);
-    printf("请输入第二个代码文件的路径：");
+    printf("请输入第二个代码文件(被查重文件)的路径：");
     scanf("%s", CHECKFILE);
     printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**");
     printf("**开始对数据进行处理**\n");
     // 程序开始
     FILE *fp = fopen(DATAFILE, "r");
-    // FILE *out1 = fopen("pre_output/code1.c", "w");
     int count[FILES];
     if(fp != NULL){
         count[1] = fileProcessor(fp, 1);
-        // fclose(out1);
         fclose(fp);
         printf("文件已关闭\n");
     }else{
@@ -187,10 +184,8 @@ int main() {
     } // 对原程序进行处理
 
     fp = fopen(CHECKFILE, "r");
-    // FILE *out2 = fopen("pre_output/code2.c", "w");
     if(fp != NULL){
         count[0] = fileProcessor(fp, 0);
-        // fclose(out2);
         fclose(fp);
         printf("文件已关闭\n");
     }else{
@@ -200,7 +195,7 @@ int main() {
 
     double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
     printf("查重成功!结果为: %lf%%\n", result);
-    if(result > 80)
+    if(result > 50)
         printf("查重率过高，该程序可能存在抄袭现象！\n");
     else
         printf("查重率正常，该程序可能不存在抄袭现象\n");
