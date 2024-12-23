@@ -121,7 +121,7 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                 if(!code && isNum(WORD))
                     code = NUMBER_CODE; // 处理数字
                 if(!code)
-                    code = isCommand(WORD);
+                    code = isCommand(WORD); // 处理预编译指令
                 if(!code)
                     code = isIdentifier(WORD); // 处理标识符
                 if(code){
