@@ -9,16 +9,16 @@
 #define SEN_LEN 256      // 最长句长
 #define FILES 2          // 总文件数量
 #define ALL_KEYWORD 37   // 所有关键词的数量
-#define ALL_COMMAND 13   // 所有预编译指令
+#define ALL_COMMAND 13   // 所有预处理指令
 #define KEYWORD_CODE 1   // 关键字的种别码起始处
-#define COMMAND_CODE 38  // 预编译指令种别码起始处
+#define COMMAND_CODE 38  // 预处理指令种别码起始处
 #define NUMBER_CODE 51   // 数字的种别码起始处
 #define STRING_CODE 52   // 字符串种别码
 #define IDEN_CODE 53     // 标识符种别码
 
 /* 二元组种别码分配
  * 1 ~ 37  - 关键字
- * 38 ~ 50 - 预编译指令
+ * 38 ~ 50 - 预处理指令
  * 51 ------ 数字
  * 52 ------ 字符串标记
  * 53 ------ 标识符
@@ -27,8 +27,10 @@
  * e.g. int main(){printf("helloworld"); return 0;}
  * (4, int), (89, main) ...) */
 
-char DATAFILE[200];     // 数据存放路径
-char CHECKFILE[200];    // 被查重代码路径
+char *DATA_OUTPUT = "DATA_OUTPUT.txt"; // 查重模板输出文件夹
+char *CODE_OUTPUT = "CODE_OUTPUT.txt"; // 被查重程序输出文件夹
+char DATAFILE[SEN_LEN];                // 数据存放路径
+char CHECKFILE[SEN_LEN];               // 被查重代码路径
 
 // 用于存储所有关键字
 char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
@@ -37,15 +39,15 @@ char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
                     "goto", "case", "switch", "return", "default", "break",
                     "sizeof", "extern", "register", "static", "auto", "volatile",
                     "inline", "typedef", "_Bool", "_Complex", "_Imaginary",
-                    };
+};
 
-// 用于存储所有预编译指令
+// 用于存储所有预处理指令
 char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "ifdef",
                     "ifndef", "undef", "line", "include_next", "pragma", "warning"
 };
 
-char BUFFER[SEN_LEN];   // 单句缓冲区
-char WORD[SEN_LEN];     // 单词缓冲区
+char BUFFER[SEN_LEN]; // 单句缓冲区
+char WORD[SEN_LEN];   // 单词缓冲区
 
 // 用于计算的二元组
 typedef struct {
@@ -77,6 +79,7 @@ int isIdentifier(char *word){
     return 0;
 }
 
+// 判断是否为预处理指令
 int isCommand(char *word){
     for(int i = 0; i < ALL_COMMAND; i++)
         if(!strcmp(word, COMMANDS[i]))
@@ -85,9 +88,10 @@ int isCommand(char *word){
 }
 
 // 处理文件，将程序分词，并将其转换成向量
-int fileProcessor(FILE *fp, int fileIndex){
+int fileProcessor(FILE *fp, FILE *out, int fileIndex){
     int count = 0, code, inComment = 0, len; // count:记录已录入的词数; code:临时存储判断函数的值; inComment:用于标记是否在多行注释中
-    char *start, *ptr; // start:记录数字和单词的起始地址; ptr:指针; symbol: 用于存储符号，后期会删掉
+    char *start, *ptr; // start:记录数字和单词的起始地址; ptr:指针
+
 
     while (fgets(BUFFER, SEN_LEN, fp) != NULL) {
         ptr = BUFFER; // 将指针指向此句句首
@@ -123,20 +127,24 @@ int fileProcessor(FILE *fp, int fileIndex){
                 if(code){
                     tuples[fileIndex].code[count] = code;
                     strcpy(tuples[fileIndex].str[count++], WORD); // 处理关键字、标识符、预处理指令
-                    // fprintf(output, "%s", WORD); // 输出到文件
+                    fprintf(out, "%s ", WORD); // 输出到文件
                 }
-            }else{ // 处理符号
+            }else{ // 处理字符串和符号，符号直接丢弃，字符串换成STRING标识
                 if(*ptr == '"'){
                     ptr++;
                     while(*ptr != '\"' || *ptr == '\"' && *(ptr - 1) == '\\') // warning! 如果原程序有语法错误，或字符串过长会导致指针越界
                         ptr++;
                     tuples[fileIndex].code[count] = STRING_CODE;
                     strcpy(tuples[fileIndex].str[count++], "STRING");
-                }
+                    fprintf(out, "%s", "STRING "); // 输出到文件
+                }else if(*ptr == '\n')
+                    fputc('\n', out);
                 ptr++;
             }
         }
     }
+    fclose(out);
+    fclose(fp);
     return count;
 }
 
@@ -164,32 +172,32 @@ double cosSim(double code1[], double code2[], int len1, int len2){
     return result;
 }
 
-int main() {
+int main(){
     int option;
-    do
-    {
-        printf("请输入第一个代码文件的路径：");
+    printf("**欢迎使用C语言程序查重系统!**\n");
+    printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
+    do{
+        printf("\n请输入第一个代码文件的路径：");
         scanf("%s", DATAFILE);
-        printf("请输入第二个代码文件(被查重文件)的路径：");
+        printf("\n请输入第二个代码文件(被查重文件)的路径：");
         scanf("%s", CHECKFILE);
-        printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
-        printf("**开始对数据进行处理**\n");
+        printf("\n**开始对数据进行处理**\n");
         // 程序开始
         FILE *fp = fopen(DATAFILE, "r");
+        FILE *outData = fopen(DATA_OUTPUT, "w+");
         int count[FILES];
         if(fp != NULL){
-            count[1] = fileProcessor(fp, 1);
-            fclose(fp);
+            count[1] = fileProcessor(fp, outData,1);
             printf("%s 已处理\n", DATAFILE);
         }else{
             perror("文件打开失败，请检查文件是否正常!\n");
             return EXIT_FAILURE;
-        } // 对原程序进行处理
+        } // 对查重模板程序进行处理
 
         fp = fopen(CHECKFILE, "r");
+        FILE *outCode = fopen(CODE_OUTPUT, "w+");
         if(fp != NULL){
-            count[0] = fileProcessor(fp, 0);
-            fclose(fp);
+            count[0] = fileProcessor(fp, outCode,0);
             printf("%s 已处理\n", CHECKFILE);
         }else{
             perror("文件打开失败，请检查文件是否正常!\n");
@@ -198,7 +206,7 @@ int main() {
 
         double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
         printf("查重成功!结果为: %lf%%\n", result);
-        if(result > 50)
+        if(result > 50) // 可以在这里设置阈值
             printf("查重率过高，该程序可能存在抄袭现象！\n");
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
@@ -206,7 +214,7 @@ int main() {
         printf("\n请选择是否进行新的查重\n输入\t-\t操作\n====================\n1\t-\t继续\n0\t-\t退出\n选择：");
         scanf("%d", &option);
         putchar('\n');
-    } while (option == 1);
+    }while (option);
 
     return 0;
 }
