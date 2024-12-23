@@ -1,6 +1,11 @@
+# Project
 .idea/
 */.idea/
 .vscode/
 */.vscode/
+
+# Output
 build/
 cmake-build-debug/
+*.exe
+*.o
