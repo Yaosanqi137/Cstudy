@@ -27,13 +27,11 @@
  * e.g. int main(){printf("helloworld"); return 0;}
  * (4, int), (89, main) ...) */
 
-char *DATA_OUTPUT = "DATA_OUTPUT.txt"; // 查重模板输出文件夹
-char *CODE_OUTPUT = "CODE_OUTPUT.txt"; // 被查重程序输出文件夹
-char DATAFILE[SEN_LEN];                // 数据存放路径
-char CHECKFILE[SEN_LEN];               // 被查重代码路径
+const char *DATA_OUTPUT = "DATA_OUTPUT.txt"; // 查重模板输出文件夹
+const char *CODE_OUTPUT = "CODE_OUTPUT.txt"; // 被查重程序输出文件夹
 
 // 用于存储所有关键字
-char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
+const char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
                     "struct", "union", "enum", "void", "signed", "unsigned", "const",
                     "while", "for", "continue", "break", "if", "else", "do",
                     "goto", "case", "switch", "return", "default", "break",
@@ -42,10 +40,12 @@ char *KEYWORDS[] = {"float", "double", "char", "int", "long", "short",
 };
 
 // 用于存储所有预处理指令
-char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "ifdef",
+const char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "ifdef",
                     "ifndef", "undef", "line", "include_next", "pragma", "warning"
 };
 
+char DATAFILE[SEN_LEN];                // 数据存放路径
+char CHECKFILE[SEN_LEN];               // 被查重代码路径
 char BUFFER[SEN_LEN]; // 单句缓冲区
 char WORD[SEN_LEN];   // 单词缓冲区
 
