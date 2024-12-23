@@ -152,28 +152,28 @@ double cosSim(double code1[], double code2[], int len1, int len2){
     if(!len2 || !len1)
         return 0;
     double model1 = 0, model2 = 0, product = 0, result;
-
+    // 对向量的每项元素缩减100倍，防止溢出
     for(int i = 0; i < len1; i++)
         code1[i] /= 100;
     for(int i = 0; i < len2; i++)
         code2[i] /= 100;
 
-    int longest = len1 > len2 ? len1 : len2;
+    int longest = len1 > len2 ? len1 : len2; // 取最长长度，较短向量后补0进行运算
 
     for(int i = 0; i < longest; i++){
-        product += code1[i] * code2[i];
-        model2 += code2[i] * code2[i];
-        model1 += code1[i] * code1[i];
+        product += code1[i] * code2[i]; // 求向量积
+        model2 += code2[i] * code2[i];  // 求向量模长的平方
+        model1 += code1[i] * code1[i];  // 求向量模长的平方
     }
 
     model2 = sqrt(model2);
     model1 = sqrt(model1);
-    result = product / (model2 * model1) * 100;
+    result = product / (model2 * model1) * 100; // 计算查重率
     return result;
 }
 
 int main(){
-    int option;
+    int option; // 选择离开程序还是继续的选项
     printf("**欢迎使用C语言程序查重系统!**\n");
     printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
     do{
