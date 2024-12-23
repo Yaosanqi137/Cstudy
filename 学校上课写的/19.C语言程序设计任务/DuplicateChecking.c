@@ -165,41 +165,48 @@ double cosSim(double code1[], double code2[], int len1, int len2){
 }
 
 int main() {
-    printf("请输入第一个代码文件的路径：");
-    scanf("%s", DATAFILE);
-    printf("请输入第二个代码文件(被查重文件)的路径：");
-    scanf("%s", CHECKFILE);
-    printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**");
-    printf("**开始对数据进行处理**\n");
-    // 程序开始
-    FILE *fp = fopen(DATAFILE, "r");
-    int count[FILES];
-    if(fp != NULL){
-        count[1] = fileProcessor(fp, 1);
-        fclose(fp);
-        printf("%s 已处理\n", DATAFILE);
-    }else{
-        perror("文件打开失败，请检查文件是否正常!\n");
-        return EXIT_FAILURE;
-    } // 对原程序进行处理
+    int option;
+    do
+    {
+        printf("请输入第一个代码文件的路径：");
+        scanf("%s", DATAFILE);
+        printf("请输入第二个代码文件(被查重文件)的路径：");
+        scanf("%s", CHECKFILE);
+        printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
+        printf("**开始对数据进行处理**\n");
+        // 程序开始
+        FILE *fp = fopen(DATAFILE, "r");
+        int count[FILES];
+        if(fp != NULL){
+            count[1] = fileProcessor(fp, 1);
+            fclose(fp);
+            printf("%s 已处理\n", DATAFILE);
+        }else{
+            perror("文件打开失败，请检查文件是否正常!\n");
+            return EXIT_FAILURE;
+        } // 对原程序进行处理
 
-    fp = fopen(CHECKFILE, "r");
-    if(fp != NULL){
-        count[0] = fileProcessor(fp, 0);
-        fclose(fp);
-        printf("%s 已处理\n", CHECKFILE);
-    }else{
-        perror("文件打开失败，请检查文件是否正常!\n");
-        return EXIT_FAILURE;
-    } // 对被查重程序进行处理
+        fp = fopen(CHECKFILE, "r");
+        if(fp != NULL){
+            count[0] = fileProcessor(fp, 0);
+            fclose(fp);
+            printf("%s 已处理\n", CHECKFILE);
+        }else{
+            perror("文件打开失败，请检查文件是否正常!\n");
+            return EXIT_FAILURE;
+        } // 对被查重程序进行处理
 
-    double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
-    printf("查重成功!结果为: %lf%%\n", result);
-    if(result > 50)
-        printf("查重率过高，该程序可能存在抄袭现象！\n");
-    else
-        printf("查重率正常，该程序可能不存在抄袭现象\n");
-    // 输出查重结果
+        double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
+        printf("查重成功!结果为: %lf%%\n", result);
+        if(result > 50)
+            printf("查重率过高，该程序可能存在抄袭现象！\n");
+        else
+            printf("查重率正常，该程序可能不存在抄袭现象\n");
+        // 输出查重结果
+        printf("\n请选择是否进行新的查重\n输入\t-\t操作\n====================\n1\t-\t继续\n0\t-\t退出\n选择：");
+        scanf("%d", &option);
+        putchar('\n');
+    } while (option == 1);
 
     return 0;
 }
