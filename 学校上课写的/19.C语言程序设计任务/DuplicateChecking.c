@@ -203,7 +203,7 @@ int main() {
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
         // 输出查重结果
-        printf("\n请选择是否进行新的查重\n输入\t-\t操作\n1\t-\t继续\n0\t-\t退出\n选择：");
+        printf("\n请选择是否进行新的查重\n输入\t-\t操作\n====================\n1\t-\t继续\n0\t-\t退出\n选择：");
         scanf("%d", &option);
         putchar('\n');
     } while (option == 1);
