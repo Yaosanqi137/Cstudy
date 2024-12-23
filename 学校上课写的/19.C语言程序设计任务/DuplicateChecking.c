@@ -206,7 +206,7 @@ int main(){
 
         double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
         printf("查重成功!结果为: %lf%%\n", result);
-        if(result > 40) // 可以在这里设置阈值
+        if(result > 50) // 可以在这里设置阈值
             printf("查重率过高，该程序可能存在抄袭现象！\n");
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
