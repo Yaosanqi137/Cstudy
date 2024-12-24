@@ -60,7 +60,7 @@ TUPLE tuples;
 // 判断是否为数字
 int isNum(char *word){
     if (word[0] >= '0' && word[0] <= '9')
-        return 1;
+        return NUMBER_CODE * NUMBER_CODE;
     return 0;
 }
 
@@ -75,7 +75,7 @@ int isKeyword(char *word){
 // 判断是否为标识符
 int isIdentifier(char *word){
     if(isalpha(word[0]) || word[0] == '_')
-        return IDEN_CODE;
+        return IDEN_CODE * IDEN_CODE;
     return 0;
 }
 
@@ -83,7 +83,7 @@ int isIdentifier(char *word){
 int isCommand(char *word){
     for(int i = 0; i < ALL_COMMAND; i++)
         if(!strcmp(word, COMMANDS[i]))
-            return COMMAND_CODE + i;
+            return (COMMAND_CODE + i) * (COMMAND_CODE + i);
     return 0;
 }
 
@@ -118,8 +118,8 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                 WORD[len] = '\0';
                 // 用于截取数字或关键字或标识符
                 code = isKeyword(WORD);
-                if(!code && isNum(WORD))
-                    code = NUMBER_CODE; // 处理数字
+                if(!code)
+                    code = isNum(WORD); // 处理数字
                 if(!code)
                     code = isCommand(WORD); // 处理预编译指令
                 if(!code)
@@ -159,6 +159,7 @@ double cosSim(double code1[], double code2[], int len1, int len2){
         code2[i] /= 100;
 
     int longest = len1 > len2 ? len1 : len2; // 取最长长度，较短向量后补0进行运算
+    int shortest = len1 > len2 ? len2 : len1;
 
     for(int i = 0; i < longest; i++){
         product += code1[i] * code2[i]; // 求向量积
@@ -168,7 +169,7 @@ double cosSim(double code1[], double code2[], int len1, int len2){
 
     model2 = sqrt(model2);
     model1 = sqrt(model1);
-    result = product / (model2 * model1) * 100; // 计算查重率
+    result = product / (model2 * model1) * 100 * (shortest / (double)longest); // 计算查重率
     return result;
 }
 
@@ -206,7 +207,7 @@ int main(){
 
         double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
         printf("查重成功!结果为: %lf%%\n", result);
-        if(result > 50) // 可以在这里设置阈值
+        if(result > 60) // 可以在这里设置阈值
             printf("查重率过高，该程序可能存在抄袭现象！\n");
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
