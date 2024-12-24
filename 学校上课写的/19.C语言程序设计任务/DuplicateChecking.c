@@ -44,17 +44,17 @@ const char *COMMANDS[] = {"if", "endif", "include", "define", "error", "else", "
                     "ifndef", "undef", "line", "include_next", "pragma", "warning"
 };
 
-char DATAFILE[SEN_LEN];                // 数据存放路径
-char CHECKFILE[SEN_LEN];               // 被查重代码路径
-char BUFFER[SEN_LEN]; // 单句缓冲区
-char WORD[SEN_LEN];   // 单词缓冲区
+char DATAFILE[SEN_LEN];  // 数据存放路径
+char CHECKFILE[SEN_LEN]; // 被查重代码路径
+char BUFFER[SEN_LEN];    // 单句缓冲区
+char WORD[SEN_LEN];      // 单词缓冲区
 
 // 用于计算的向量
 typedef struct {
     double code[MAX_LEN];
 } VECTOR[FILES];
 
-VECTOR tuples;
+VECTOR vector;
 
 // 判断是否为数字
 int isNum(char *word){
@@ -123,7 +123,7 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                 if(!code)
                     code = isIdentifier(WORD); // 处理标识符
                 if(code){
-                    tuples[fileIndex].code[count++] = code; // 处理关键字、标识符、预处理指令
+                    vector[fileIndex].code[count++] = code; // 处理关键字、标识符、预处理指令
                     fprintf(out, "%s ", WORD); // 输出到文件
                 }
             }else{ // 处理字符串和符号，符号直接丢弃，字符串换成STRING标识
@@ -131,7 +131,7 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                     ptr++;
                     while(*ptr != '\"' || *ptr == '\"' && *(ptr - 1) == '\\') // warning! 如果原程序有语法错误，或字符串过长会导致指针越界
                         ptr++;
-                    tuples[fileIndex].code[count++] = STRING_CODE;
+                    vector[fileIndex].code[count++] = STRING_CODE;
                     fprintf(out, "%s", "STRING "); // 输出到文件
                 }else if(*ptr == '\n')
                     fputc('\n', out);
@@ -149,6 +149,7 @@ double cosSim(double code1[], double code2[], int len1, int len2){
         return 0;
     double model1 = 0, model2 = 0, product = 0, result;
     // 对向量的每项元素缩减100倍，防止溢出
+    
     for(int i = 0; i < len1; i++)
         code1[i] /= 100;
     for(int i = 0; i < len2; i++)
@@ -158,13 +159,16 @@ double cosSim(double code1[], double code2[], int len1, int len2){
     int shortest = len1 > len2 ? len2 : len1;
 
     for(int i = 0; i < longest; i++)
-        product += code1[i] * code2[i]; // 求向量积
+        product += code1[i] * code2[i]; 
+    // 求向量积
+    
     for(int i = 0; i < len2; i++)
         model2 += code2[i] * code2[i];
     for(int i = 0; i < len1; i++)
         model1 += code1[i] * code1[i];
     model2 = sqrt(model2);
-    model1 = sqrt(model1); // 求向量模
+    model1 = sqrt(model1); 
+    // 求向量模
 
     result = product / (model2 * model1) * 100 * (shortest / (double)longest); // 计算查重率
     return result;
@@ -176,18 +180,20 @@ int main(){
     printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
     do{
         i = 0;
-        while(tuples[0].code[i])
-            tuples[0].code[i++] = 0;
+        while(vector[0].code[i])
+            vector[0].code[i++] = 0;
         i = 0;
-        while(tuples[1].code[i])
-            tuples[1].code[i++] = 0;
-        // 将元组中的数据清空
+        while(vector[1].code[i])
+            vector[1].code[i++] = 0;
+        // 将向量中的数据清空
+        
         printf("\n请输入第一个代码文件(模板程序)的路径：");
         scanf("%s", DATAFILE);
         printf("\n请输入第二个代码文件(被查重程序)的路径：");
         scanf("%s", CHECKFILE);
         printf("\n**开始对数据进行处理**\n");
         // 程序开始
+        
         FILE *fp = fopen(DATAFILE, "r");
         FILE *outData = fopen(DATA_OUTPUT, "w+");
         int count[FILES];
@@ -209,7 +215,7 @@ int main(){
             return EXIT_FAILURE;
         } // 对被查重程序进行处理
 
-        double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
+        double result = cosSim(vector[1].code, vector[0].code, count[1], count[0]);
         printf("查重成功!结果为: %lf%%\n", result);
         if(result > 65) // 可以在这里设置阈值
             printf("查重率过高，该程序大概率存在抄袭现象！\n");
@@ -218,10 +224,11 @@ int main(){
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
         // 输出查重结果
+        
         printf("\n请选择是否进行新的查重\n输入\t-\t操作\n====================\n1\t-\t继续\n0\t-\t退出\n选择：");
         scanf("%d", &option);
         putchar('\n');
-    }while (option);
+    }while(option);
 
     return 0;
 }
