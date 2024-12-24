@@ -94,9 +94,9 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
     while (fgets(BUFFER, SEN_LEN, fp) != NULL) {
         ptr = BUFFER; // 将指针指向此句句首
         while (*ptr != '\0') {
-            if (!strncmp(ptr, "//", 2)) {// 跳过单行注释
+            if (!strncmp(ptr, "//", 2)) // 跳过单行注释
                 break; // 跳过本行检查
-            }if(!strncmp(ptr, "/*", 2)){ // 检测到是多行注释开头，将inComment改为1
+            if(!strncmp(ptr, "/*", 2)){ // 检测到是多行注释开头，将inComment改为1
                 inComment = 1, ptr += 2;
                 continue; // 并跳过本次循环
             }if(!strncmp(ptr, "*/", 2)){ // 检查到是多行注释终止符号，将inComment改成0
@@ -107,10 +107,17 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                 continue;
             } // 跳过多行注释
 
-            if(isalnum(*ptr) || *ptr == '_'){ // 提取数字和单词
+            if(isalnum(*ptr) || *ptr == '_' || *ptr == '.' ||
+                (*ptr == '-' && *(ptr + 1) == '>' && ptr + 1 < BUFFER + strlen(BUFFER))){ // 提取数字和单词，并区分小数、结构体成员、头文件名
                 start = ptr;
-                while(isalnum(*ptr) || *ptr == '_')
-                    ptr++;
+                while(isalnum(*ptr) || *ptr == '_' || *ptr == '.' ||
+                    (*ptr == '-' && *(ptr + 1) == '>' && ptr + 1 < BUFFER + strlen(BUFFER)))
+                    if(isalnum(*ptr) || *ptr == '_' || *ptr == '.')
+                        ptr++;
+                    else if(*ptr == '-' && *(ptr + 1) == '>' && ptr + 1 < BUFFER + strlen(BUFFER))
+                        ptr += 2;
+                // 截取单词
+
                 len = ptr - start;
                 strncpy(WORD, start, len); // 将单词和数字拷贝进单词缓冲区
                 WORD[len] = '\0';
