@@ -5,7 +5,7 @@
 #include <math.h>
 
 // 定义的宏
-#define MAX_LEN 4096     // 二元组最大长度
+#define MAX_LEN 4096     // 向量最大长度
 #define SEN_LEN 256      // 最长句长
 #define FILES 2          // 总文件数量
 #define ALL_KEYWORD 37   // 所有关键词的数量
@@ -16,16 +16,16 @@
 #define STRING_CODE 52   // 字符串种别码
 #define IDEN_CODE 53     // 标识符种别码
 
-/* 二元组种别码分配
+/* 各成分种别码分配
  * 1 ~ 37  - 关键字
  * 38 ~ 50 - 预处理指令
  * 51 ------ 数字
  * 52 ------ 字符串标记
  * 53 ------ 标识符
  * 0 ------- 向量终止符
- * 同时，使用使用二元组进行存储
+ * 使用向量进行存储
  * e.g. int main(){printf("helloworld"); return 0;}
- * (4, int), (89, main) ...) */
+ * 4, 89, ... */
 
 const char *DATA_OUTPUT = "DATA_OUTPUT.txt"; // 查重模板输出文件夹
 const char *CODE_OUTPUT = "CODE_OUTPUT.txt"; // 被查重程序输出文件夹
@@ -49,13 +49,12 @@ char CHECKFILE[SEN_LEN];               // 被查重代码路径
 char BUFFER[SEN_LEN]; // 单句缓冲区
 char WORD[SEN_LEN];   // 单词缓冲区
 
-// 用于计算的二元组
+// 用于计算的向量
 typedef struct {
     double code[MAX_LEN];
-    char str[MAX_LEN][SEN_LEN];
-} TUPLE[FILES];
+} VECTOR[FILES];
 
-TUPLE tuples;
+VECTOR tuples;
 
 // 判断是否为数字
 int isNum(char *word){
@@ -92,7 +91,6 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
     int count = 0, code, inComment = 0, len; // count:记录已录入的词数; code:临时存储判断函数的值; inComment:用于标记是否在多行注释中
     char *start, *ptr; // start:记录数字和单词的起始地址; ptr:指针
 
-
     while (fgets(BUFFER, SEN_LEN, fp) != NULL) {
         ptr = BUFFER; // 将指针指向此句句首
         while (*ptr != '\0') {
@@ -125,8 +123,7 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                 if(!code)
                     code = isIdentifier(WORD); // 处理标识符
                 if(code){
-                    tuples[fileIndex].code[count] = code;
-                    strcpy(tuples[fileIndex].str[count++], WORD); // 处理关键字、标识符、预处理指令
+                    tuples[fileIndex].code[count++] = code; // 处理关键字、标识符、预处理指令
                     fprintf(out, "%s ", WORD); // 输出到文件
                 }
             }else{ // 处理字符串和符号，符号直接丢弃，字符串换成STRING标识
@@ -134,8 +131,7 @@ int fileProcessor(FILE *fp, FILE *out, int fileIndex){
                     ptr++;
                     while(*ptr != '\"' || *ptr == '\"' && *(ptr - 1) == '\\') // warning! 如果原程序有语法错误，或字符串过长会导致指针越界
                         ptr++;
-                    tuples[fileIndex].code[count] = STRING_CODE;
-                    strcpy(tuples[fileIndex].str[count++], "STRING");
+                    tuples[fileIndex].code[count++] = STRING_CODE;
                     fprintf(out, "%s", "STRING "); // 输出到文件
                 }else if(*ptr == '\n')
                     fputc('\n', out);
@@ -161,23 +157,31 @@ double cosSim(double code1[], double code2[], int len1, int len2){
     int longest = len1 > len2 ? len1 : len2; // 取最长长度，较短向量后补0进行运算
     int shortest = len1 > len2 ? len2 : len1;
 
-    for(int i = 0; i < longest; i++){
+    for(int i = 0; i < longest; i++)
         product += code1[i] * code2[i]; // 求向量积
-        model2 += code2[i] * code2[i];  // 求向量模长的平方
-        model1 += code1[i] * code1[i];  // 求向量模长的平方
-    }
-
+    for(int i = 0; i < len2; i++)
+        model2 += code2[i] * code2[i];
+    for(int i = 0; i < len1; i++)
+        model1 += code1[i] * code1[i];
     model2 = sqrt(model2);
-    model1 = sqrt(model1);
+    model1 = sqrt(model1); // 求向量模
+
     result = product / (model2 * model1) * 100 * (shortest / (double)longest); // 计算查重率
     return result;
 }
 
 int main(){
-    int option; // 选择离开程序还是继续的选项
+    int option, i; // 选择离开程序还是继续的选项
     printf("**欢迎使用C语言程序查重系统!**\n");
     printf("**注意！请一定要注意原文件语法是否正确，否则本程序无法进行分析**\n");
     do{
+        i = 0;
+        while(tuples[0].code[i])
+            tuples[0].code[i++] = 0;
+        i = 0;
+        while(tuples[1].code[i])
+            tuples[1].code[i++] = 0;
+        // 将元组中的数据清空
         printf("\n请输入第一个代码文件(模板程序)的路径：");
         scanf("%s", DATAFILE);
         printf("\n请输入第二个代码文件(被查重程序)的路径：");
@@ -207,8 +211,10 @@ int main(){
 
         double result = cosSim(tuples[1].code, tuples[0].code, count[1], count[0]);
         printf("查重成功!结果为: %lf%%\n", result);
-        if(result > 60) // 可以在这里设置阈值
-            printf("查重率过高，该程序可能存在抄袭现象！\n");
+        if(result > 65) // 可以在这里设置阈值
+            printf("查重率过高，该程序大概率存在抄袭现象！\n");
+        else if(result > 55)
+            printf("查重率偏高，该程序可能存在抄袭现象！\n");
         else
             printf("查重率正常，该程序可能不存在抄袭现象\n");
         // 输出查重结果
