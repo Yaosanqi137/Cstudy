@@ -4,7 +4,7 @@
 int main(){
     long long a = 1,b = 0,c;
     int term, start, end;
-    printf("请问你想看到斐波那契数列的第几项:");
+    printf("浣犳兂鐪嬪埌鏂愭尝閭ｅ鏁板垪鐨勭鍑犻」:");
     scanf("%d", &term);
     start = clock();
     for(int i = 1;i <= term;i++){
@@ -14,6 +14,6 @@ int main(){
         a += c;
     }
     end = clock();
-    printf("耗时: %dms\n", end - start);
+    printf("鑰楁椂: %dms\n", end - start);
     return 0;
 }

@@ -1,9 +1,9 @@
 #include <stdio.h>
-#define N 8 // è¿™é‡Œå¯ä»¥æ˜¯ä»»ä½•æ•°
+#define N 8 // ÕâÀï¿ÉÒÔÊÇÈÎºÎÊı
 
 int main(){
     int a, mx;
-    printf("è¯·è¾“å…¥%dä¸ªæ•°å­—: ", N);
+    printf("ÇëÊäÈë%d¸öÊı×Ö: ", N);
     scanf("%d", &a);
     mx = a;
     for(int i = 2;i <= N;i++){
@@ -11,6 +11,6 @@ int main(){
         if(a >= mx)
             mx = a;
     }
-    printf("æœ€å¤§çš„æ•°å­—æ˜¯: %d\n", mx);
+    printf("×î´óµÄÊı×ÖÊÇ: %d\n", mx);
     return 0;
 }

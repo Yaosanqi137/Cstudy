@@ -30,7 +30,7 @@ void printM(struct data *p[], int n, int m){
 void printAll(struct data mobile[], int n){
     for(int i = 0; i < n; i++){
         printf("%-2d %-6s", i + 1, mobile[i].name);
-        for(int j = 1; j < 12; j++)
+        for(int j = 1; j <= 12; j++)
             printf("%8d", mobile[i].sales[j]);
         printf("%8d\n", mobile[i].sales[0]);
     }

@@ -26,9 +26,8 @@ struct student *del(struct student *head, long target){
             printf("Deleted, %ld\n", target);
             count--;
             free(temp);
-        }else{
-            printf("%ld not been find!", target);
-        }
+        }else
+            printf("%ld not been find!\n", target);
     }else
         printf("List is null!\n");
     return head;
@@ -81,9 +80,8 @@ void print(struct student *head){
             printf("%ld %5.1f\n", p->num, p->score);
             p = p->next;
         }while(p);
-    }else{
+    }else
         printf("\nSorry! No records now!\n");
-    }
 }
 
 int main(){

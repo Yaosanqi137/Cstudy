@@ -4,6 +4,7 @@
 #include <string.h>
 #define N 10
 #define M 1000
+#define value 7
 
 const char *DATAFILE = "vote.dat";
 
@@ -95,9 +96,9 @@ void process(){
     float max = -1, ave;
     int id;
     for(int i = 0; i < N; i++)
-        if(goods[i].n >= 2 && (ave = goods[i].sum / goods[i].n) > max)
+        if(goods[i].n >= value && (ave = goods[i].sum / goods[i].n) > max)
             max = ave, id = i;
-    printf("最受欢迎的商品信息(评分人数不少于2人):\n%2d       %-4d    %.2f\n", id + 1, goods[id].n, max);
+    printf("最受欢迎的商品信息(评分人数不少于%d人):\n%2d       %-4d    %.2f\n", value, id + 1, goods[id].n, max);
 }
 
 int main(){
