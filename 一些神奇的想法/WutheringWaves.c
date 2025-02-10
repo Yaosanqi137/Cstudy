@@ -2,16 +2,16 @@
 #include <stdlib.h>
 #include <time.h>
 #define MAX_LEN 32 // 奖项名字最长字数
-#define REWARDS 15 // 总奖项数量
+#define REWARDS 10 // 总奖项数量
 #define UP 0 // up的人物
 #define SMALL 10 // 小保底
 #define BIG 80 // 大保底
 #define MAX_TIME 1000 // 一次性最多抽卡的次数
-#define FIVE_STAR 4 // 5星的个数
+#define FIVE_STAR 3 // 5星的个数,不包括up的角色
 #define FOUR_STAR 5 // 4星的个数
-#define TRASH 14 // 三星装备
+#define TRASH 9 // 三星装备索引
 
-char REWARD[REWARDS][MAX_LEN] = {"高豪聪", "卡卡罗", "卡卡罗", "雪豹", "雪豹",
+char REWARD[REWARDS][MAX_LEN] = {"菲比", "卡卡罗", "神级卡卡罗", "雪豹",
                                  "丹瑾", "秧秧", "四星装备1", "四星装备2", "四星装备3",
                                  "杂鱼三星装备"};
 
